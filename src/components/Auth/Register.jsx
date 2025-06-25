@@ -6,42 +6,57 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    console.log("Registering", name, email, password);
-    // Add registration logic here
-  };
-
   return (
-    <form onSubmit={handleRegister} className={styles.formContainer}>
-      <h2 className={styles.formTitle}>Register</h2>
+    <form className={styles.form}>
+      <p className={styles.subheading}>INTRODUCE YOURSELF</p>
+      <h2 className={styles.heading}>Hi there! My name is</h2>
+
       <input
         type="text"
-        placeholder="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className={styles.inputField}
-        required
+        className={styles.input}
       />
+
+      <label className={styles.label}>
+        Here’s my <strong>email address</strong>:
+      </label>
       <input
         type="email"
-        placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className={styles.inputField}
-        required
+        className={styles.input}
       />
+
+      <label className={styles.label}>
+        And here’s my <strong>password</strong>:
+      </label>
       <input
         type="password"
-        placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className={styles.inputField}
-        required
+        className={styles.input}
       />
-      <button type="submit" className={styles.submitBtn}>
-        Register
-      </button>
+
+      <div className={styles.recaptcha}>[reCAPTCHA here]</div>
+
+      <button className={styles.signup}>Sign me up!</button>
+
+      <div className={styles.orContainer}>
+        <span className={styles.or}>or</span>
+        <button type="button" className={styles.googleBtn}>
+          <img src="/google-icon.svg.webp" alt="G" height="16" />
+          Sign up with Google
+        </button>
+      </div>
+
+      <p className={styles.terms}>
+        By signing up, you accept the <a href="#">Splitwise Terms of Service</a>
+        .
+      </p>
+      <p className={styles.currency}>
+        Don’t use USD for currency? <a href="#">Click here</a>.
+      </p>
     </form>
   );
 }

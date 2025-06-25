@@ -1,16 +1,18 @@
 import React from "react";
 import Register from "../components/Auth/Register";
+import styles from "./RegisterPage.module.css";
 
 export default function RegisterPage() {
   return (
-    <div
-      style={{
-        backgroundColor: "#f2f2f2",
-        minHeight: "100vh",
-        paddingTop: "3rem",
-      }}
-    >
-      <Register />
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <img
+          src="/s.png" // use actual Splitwise-like logo
+          alt="Logo"
+          className={styles.logo}
+        />
+        <Register />
+      </div>
     </div>
   );
 }

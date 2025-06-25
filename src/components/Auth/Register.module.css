@@ -1,30 +1,98 @@
-.formContainer {
+.form {
   max-width: 400px;
-  margin: 4rem auto;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.inputField {
-  width: 100%;
-  padding: 0.75rem;
+.subheading {
+  text-transform: uppercase;
+  color: #888;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.heading {
+  font-size: 1.25rem;
+  color: #888;
+  font-weight: 400;
   margin-bottom: 1rem;
+}
+
+.label {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: #222;
+}
+
+.input {
+  margin-top: 0.4rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 1rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
-.submitBtn {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #28a745;
+.recaptcha {
+  margin-top: 1.2rem;
+  height: 80px;
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.signup {
+  margin-top: 1rem;
+  background-color: #f05b27;
   color: white;
-  font-weight: bold;
+  padding: 0.6rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 3px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.submitBtn:hover {
-  background-color: #218838;
+.orContainer {
+  display: flex;
+  align-items: center;
+  margin: 0.75rem 0;
+}
+
+.or {
+  margin-right: 0.5rem;
+  color: #777;
+  font-size: 0.85rem;
+}
+
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.75rem;
+  width: 100%;
+  background-color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #444; /* Ensure text is visible */
+}
+.terms,
+.currency {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 1rem;
+}
+
+.terms a,
+.currency a {
+  color: #0077cc;
+  text-decoration: none;
 }
