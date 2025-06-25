@@ -1,0 +1,32 @@
+.dashboardContainer {
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+.balanceContainer {
+  margin-top: 1.5rem;
+}
+
+.balanceTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #444;
+}
+
+.balanceList {
+  list-style: none;
+  padding: 0;
+}
+
+.balanceItem {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+  color: #222;
+}

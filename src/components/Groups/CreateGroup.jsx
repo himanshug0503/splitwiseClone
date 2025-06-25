@@ -1,5 +1,6 @@
 // src/components/Groups/CreateGroup.jsx
 import React, { useState } from "react";
+import styles from "./CreateGroup.module.css";
 
 export default function CreateGroup() {
   const [groupName, setGroupName] = useState("");
@@ -7,20 +8,19 @@ export default function CreateGroup() {
   const handleCreateGroup = (e) => {
     e.preventDefault();
     console.log("Creating group:", groupName);
-    // Add create group logic
   };
 
   return (
-    <form onSubmit={handleCreateGroup} className="flex space-x-2 mb-4">
+    <form onSubmit={handleCreateGroup} className={styles.formGroup}>
       <input
         type="text"
         placeholder="Group Name"
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
-        className="border p-2"
+        className={styles.inputField}
         required
       />
-      <button type="submit" className="bg-purple-500 text-white px-4">
+      <button type="submit" className={styles.createBtn}>
         Create
       </button>
     </form>

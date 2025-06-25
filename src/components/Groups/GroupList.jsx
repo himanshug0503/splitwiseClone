@@ -1,18 +1,16 @@
-// src/components/Groups/GroupList.jsx
 import React from "react";
+import styles from "./GroupList.module.css";
 
 export default function GroupList() {
   const groups = ["Trip to Goa", "Roommates"];
 
   return (
-    <div>
-      <ul>
-        {groups.map((group, idx) => (
-          <li key={idx} className="py-1">
-            {group}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className={styles.groupList}>
+      {groups.map((group, idx) => (
+        <li key={idx} className={styles.groupItem}>
+          {group}
+        </li>
+      ))}
+    </ul>
   );
 }

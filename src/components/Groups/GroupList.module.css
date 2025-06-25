@@ -1,0 +1,12 @@
+.groupList {
+  list-style: none;
+  padding: 0;
+}
+
+.groupItem {
+  background: #f9f9f9;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}

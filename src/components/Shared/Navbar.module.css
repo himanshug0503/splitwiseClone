@@ -1,0 +1,25 @@
+.navbar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navBrand {
+  font-size: 1.5rem;
+  color: #007bff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.navLinks a {
+  margin-left: 1rem;
+  color: #333;
+  text-decoration: none;
+}
+
+.navLinks a:hover {
+  text-decoration: underline;
+}

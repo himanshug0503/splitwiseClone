@@ -1,5 +1,5 @@
-// src/components/Auth/Register.jsx
 import React, { useState } from "react";
+import styles from "./Register.module.css";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -13,16 +13,14 @@ export default function Register() {
   };
 
   return (
-    <form
-      onSubmit={handleRegister}
-      className="flex flex-col space-y-4 max-w-sm mx-auto"
-    >
+    <form onSubmit={handleRegister} className={styles.formContainer}>
+      <h2 className={styles.formTitle}>Register</h2>
       <input
         type="text"
         placeholder="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="border p-2"
+        className={styles.inputField}
         required
       />
       <input
@@ -30,7 +28,7 @@ export default function Register() {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="border p-2"
+        className={styles.inputField}
         required
       />
       <input
@@ -38,10 +36,10 @@ export default function Register() {
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="border p-2"
+        className={styles.inputField}
         required
       />
-      <button type="submit" className="bg-green-500 text-white px-4 py-2">
+      <button type="submit" className={styles.submitBtn}>
         Register
       </button>
     </form>

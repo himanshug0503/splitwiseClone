@@ -1,5 +1,5 @@
-// src/components/Dashboard/BalanceSummary.jsx
 import React from "react";
+import styles from "./Dashboard.module.css";
 
 export default function BalanceSummary() {
   const balances = [
@@ -8,15 +8,14 @@ export default function BalanceSummary() {
   ];
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold">Your Balances</h2>
-      <ul className="mt-2">
+    <div className={styles.balanceContainer}>
+      <h2 className={styles.balanceTitle}>Your Balances</h2>
+      <ul className={styles.balanceList}>
         {balances.map((b, idx) => (
-          <li key={idx} className="py-1">
-            {b.name}{" "}
+          <li key={idx} className={styles.balanceItem}>
             {b.amount < 0
-              ? `owes you $${Math.abs(b.amount)}`
-              : `you owe $${b.amount} to ${b.name}`}
+              ? `${b.name} owes you ₹${Math.abs(b.amount)}`
+              : `You owe ₹${b.amount} to ${b.name}`}
           </li>
         ))}
       </ul>
