@@ -7,7 +7,7 @@ export default function DashboardPage() {
       style={{
         backgroundColor: "#f2f2f2",
         minHeight: "100vh",
-        padding: "2rem",
+        overflow: "hidden",
       }}
     >
       <Dashboard />
