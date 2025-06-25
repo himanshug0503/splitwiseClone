@@ -1,0 +1,142 @@
+.heroSection {
+  height: 100vh;
+  width: 200vh;
+  max-width: 100%;
+  background: linear-gradient(to bottom, #fff, #f8f8f8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.heroContent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1300px;
+  width: 100%;
+  gap: 2rem;
+}
+
+.left,
+.right {
+  flex: 1;
+  min-width: 300px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroImage {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #111;
+  line-height: 1.3;
+}
+
+.highlight {
+  color: #a34061;
+}
+
+.icons {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.description {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.signUpBtn {
+  background-color: #b60048;
+  color: white;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.signUpBtn:hover {
+  background-color: #93003c;
+}
+
+.smallText {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+/* Tablet (up to 1024px) */
+@media (max-width: 1024px) {
+  .heroContent {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .left,
+  .right {
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .heroImage {
+    max-width: 400px;
+  }
+}
+
+/* Mobile (up to 768px) */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .heroImage {
+    max-width: 300px;
+  }
+
+  .signUpBtn {
+    width: 100%;
+    font-size: 1rem;
+  }
+}
+
+/* Extra small devices (up to 480px) */
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .description {
+    font-size: 0.9rem;
+  }
+
+  .heroImage {
+    max-width: 250px;
+  }
+
+  .signUpBtn {
+    padding: 0.6rem 1.5rem;
+  }
+}

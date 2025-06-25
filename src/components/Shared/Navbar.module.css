@@ -5,21 +5,50 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .navBrand {
   font-size: 1.5rem;
-  color: #007bff;
-  font-weight: bold;
+  color: #2d84fb;
+  font-weight: 600;
   text-decoration: none;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
 }
 
 .navLinks a {
-  margin-left: 1rem;
+  margin-left: 1.5rem;
   color: #333;
   text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .navLinks a:hover {
+  color: #007bff;
   text-decoration: underline;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navLinks {
+    flex-direction: column;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .navLinks a {
+    margin: 0.5rem 0;
+  }
 }

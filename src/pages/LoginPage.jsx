@@ -1,15 +1,10 @@
 import React from "react";
 import Login from "../components/Auth/Login";
+import "./LoginPage.css"; // link to the CSS below
 
 export default function LoginPage() {
   return (
-    <div
-      style={{
-        backgroundColor: "#f2f2f2",
-        minHeight: "100vh",
-        paddingTop: "3rem",
-      }}
-    >
+    <div className="loginPageWrapper">
       <Login />
     </div>
   );
