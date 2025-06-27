@@ -1,0 +1,80 @@
+.footer {
+  background-color: #fff;
+  padding: 40px 20px;
+  font-family: sans-serif;
+  border-top: 1px solid #e0e0e0;
+}
+
+.sections {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.sections div {
+  flex: 1 1 200px;
+  margin: 10px;
+}
+
+.sections h4 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.sections ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sections li {
+  margin: 6px 0;
+}
+
+.sections a {
+  color: #666;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.sections a:hover {
+  text-decoration: underline;
+}
+
+.appLinks img {
+  width: 130px;
+  margin: 10px 0;
+  display: block;
+}
+
+.bottomNote {
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: #777;
+}
+
+.heart {
+  color: red;
+}
+
+.socialIcons a {
+  margin-left: 10px;
+  color: #666;
+  font-size: 18px;
+}
+
+.appLinks {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.appLinks img {
+  width: 130px;
+  display: block;
+}

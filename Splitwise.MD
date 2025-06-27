@@ -1,3 +1,41 @@
+Project Structure:
+
+splitwise-clone/
+├── public/
+├── src/
+│ ├── components/
+│ │ ├── Auth/
+│ │ │ ├── Login.jsx
+│ │ │ └── Register.jsx
+│ │ ├── Dashboard/
+│ │ │ ├── Dashboard.jsx
+│ │ │ └── BalanceSummary.jsx
+│ │ ├── Groups/
+│ │ │ ├── CreateGroup.jsx
+│ │ │ ├── GroupDetails.jsx
+│ │ │ └── GroupList.jsx
+│ │ ├── Expenses/
+│ │ │ ├── AddExpense.jsx
+│ │ │ ├── ExpenseList.jsx
+│ │ │ └── SettleUp.jsx
+│ │ └── Shared/
+│ │ ├── Navbar.jsx
+│ │ └── ProtectedRoute.jsx
+│ ├── pages/
+│ │ ├── Home.jsx
+│ │ ├── LoginPage.jsx
+│ │ ├── RegisterPage.jsx
+│ │ ├── DashboardPage.jsx
+│ │ ├── GroupPage.jsx
+│ │ └── NotFoundPage.jsx
+│ ├── App.jsx
+│ ├── index.js
+│ ├── api/ (for axios calls)
+│ ├── context/ (for user and group state management)
+│ └── utils/ (encryption, calculation logic)
+├── package.json
+└── README.md
+
 Important commands:
 
 To run the server - npm run dev
