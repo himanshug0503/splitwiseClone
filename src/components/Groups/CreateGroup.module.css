@@ -1,25 +1,299 @@
-.formGroup {
+.container {
+  height: 95vh;
+  width: 95vw;
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  padding: 2rem;
+  background-color: #fafafa;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 2rem;
+}
+
+.logoBox {
+  width: 160px;
+  height: 160px;
+  background: #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease-in-out;
+}
+
+.logoBox:hover {
+  transform: scale(1.05);
+}
+
+.previewImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fileInput {
+  margin-top: 0.5rem;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.right {
+  max-width: 400px;
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.5s ease-in-out;
+  transition: all 0.3s ease;
+}
+
+.heading {
+  color: #999;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.label {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  text-align: left;
+  width: 100%;
+}
+
+.input,
+.inputSmall,
+.dropdown {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: 0.2s ease-in-out;
+}
+
+.input {
+  padding: 0.75rem;
   margin-bottom: 1rem;
 }
 
-.inputField {
+.inputSmall {
   flex: 1;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
 }
 
-.createBtn {
-  padding: 0.75rem 1rem;
-  background-color: #6f42c1;
-  color: white;
+.input:focus,
+.inputSmall:focus,
+.dropdown:focus {
+  border-color: #00bfa6;
+  outline: none;
+}
+
+.subHeading {
+  font-size: 0.9rem;
+  color: #444;
+  margin: 1rem 0 0.5rem;
+  text-align: left;
+  width: 100%;
+}
+
+.memberRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.removeBtn {
+  background: none;
   border: none;
-  border-radius: 4px;
-  font-weight: bold;
+  color: red;
+  font-size: 1rem; /* Slightly smaller by default */
+  cursor: pointer;
+  margin-left: 0.5rem;
+  padding: 0;
+  line-height: 1;
+  transition: transform 0.2s ease-in-out;
 }
 
-.createBtn:hover {
-  background-color: #5a32a3;
+.removeBtn:hover {
+  transform: scale(1.25); /* Zoom effect on hover */
+}
+
+.addBtn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.3rem;
+  text-align: left;
+  padding-left: 0;
+}
+
+.addBtn:hover {
+  text-decoration: underline;
+}
+
+.groupOptions {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.dropdown {
+  padding: 0.6rem;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.dropdown:hover {
+  border-color: #00bfa6;
+}
+
+.infoText {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.toggleLabel {
+  font-size: 0.9rem;
+}
+
+.toggleSwitch {
+  position: relative;
+  width: 42px;
+  height: 24px;
+}
+
+.toggleSwitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.toggleSwitch input:checked + .slider {
+  background-color: #00bfa6;
+}
+
+.toggleSwitch input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+.button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #ff652f;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #e05b26;
+}
+
+.fadeInSection {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: max-height 0.6s ease, opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fadeInVisible {
+  max-height: 1000px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 2rem;
+  }
+
+  .left,
+  .right {
+    width: 100%;
+    align-items: center;
+  }
+
+  .right {
+    max-width: none;
+    padding: 1.5rem;
+  }
+
+  .fileInput {
+    width: 100%;
+    text-align: center;
+  }
 }
