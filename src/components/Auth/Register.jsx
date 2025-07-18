@@ -1,13 +1,38 @@
 import React, { useState } from "react";
+import axios from "axios";
 import styles from "./Register.module.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // prevent form refresh
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/register", {
+        name,
+        email,
+        password,
+      });
+
+      // Optionally save token to localStorage
+      localStorage.setItem("token", res.data.token);
+
+      // Redirect to dashboard or login
+      navigate("/dashboard"); // or use `/login` if you want them to log in separately
+    } catch (err) {
+      setError(err.response?.data?.msg || "Registration failed");
+    }
+  };
 
   return (
-    <form className={styles.form}>
+    <form className={styles.form} onSubmit={handleSubmit}>
       <p className={styles.subheading}>INTRODUCE YOURSELF</p>
       <h2 className={styles.heading}>Hi there! My name is</h2>
 
@@ -16,6 +41,7 @@ export default function Register() {
         value={name}
         onChange={(e) => setName(e.target.value)}
         className={styles.input}
+        required
       />
 
       <label className={styles.label}>
@@ -26,6 +52,7 @@ export default function Register() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         className={styles.input}
+        required
       />
 
       <label className={styles.label}>
@@ -36,11 +63,16 @@ export default function Register() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         className={styles.input}
+        required
       />
 
       <div className={styles.recaptcha}>[reCAPTCHA here]</div>
 
-      <button className={styles.signup}>Sign me up!</button>
+      <button type="submit" className={styles.signup}>
+        Sign me up!
+      </button>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <div className={styles.orContainer}>
         <span className={styles.or}>or</span>
