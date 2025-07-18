@@ -21,3 +21,9 @@ mongoose
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+const authMiddleware = require("./middleware/authMiddleware");
+
+app.get("/api/protected", authMiddleware, (req, res) => {
+  res.json({ msg: "✅ You accessed a protected route!", userId: req.userId });
+});
