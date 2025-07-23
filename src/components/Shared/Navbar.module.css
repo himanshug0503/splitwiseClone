@@ -52,3 +52,12 @@
     margin: 0.5rem 0;
   }
 }
+
+.logoutBtn {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font: inherit;
+  margin-left: 1rem;
+}

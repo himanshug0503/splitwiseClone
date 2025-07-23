@@ -1,6 +1,8 @@
+// src/components/Auth/Login.jsx
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // ✅ Add this
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext"; // ✅ import context
 import styles from "./Login.module.css";
 
 export default function Login() {
@@ -8,7 +10,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const navigate = useNavigate(); // ✅ Initialize navigate
+  const navigate = useNavigate();
+  const { login } = useAuth(); // ✅ context login method
 
   const handleLogin = async () => {
     try {
@@ -17,10 +20,11 @@ export default function Login() {
         password,
       });
 
-      localStorage.setItem("token", res.data.token); // save token
-      setMessage("✅ Login successful");
+      const { token, user } = res.data; // expecting both token and user from server
 
-      navigate("/dashboard"); // ✅ Navigate to dashboard
+      login({ ...user, token }); // ✅ call login from context
+      setMessage("✅ Login successful");
+      navigate("/dashboard");
     } catch (err) {
       setMessage(
         "❌ Login failed: " + (err.response?.data?.msg || err.message)
