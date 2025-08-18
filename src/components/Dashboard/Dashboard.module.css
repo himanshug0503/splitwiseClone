@@ -233,3 +233,41 @@
   color: #007cc2;
   text-decoration: underline;
 }
+
+.balanceContainer {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.balanceTitle {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.balanceList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.balanceItem {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.positive {
+  color: green;
+}
+
+.negative {
+  color: red;
+}
+
+.noBalance {
+  font-size: 1.1rem;
+  color: gray;
+  font-style: italic;
+}

@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import styles from "./Dashboard.module.css";
+import BalanceSummary from "./BalanceSummary";
+import AddExpenseModal from "./AddExpenseModal"; // ✅ Import the modal
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("Dashboard");
+  const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
 
   const renderMainContent = () => {
     if (activeTab === "Recent activity") {
@@ -21,15 +24,18 @@ export default function Dashboard() {
       );
     } else {
       return (
-        <div className={styles.settledBox}>
-          <img src="/new1.png" alt="Settled" />
-          <div>
-            <h2>You’re all settled up. Awesome!</h2>
-            <p>
-              To add a new expense, click the orange “Add an expense” button.
-            </p>
+        <>
+          <div className={styles.settledBox}>
+            <img src="/new1.png" alt="Settled" />
+            <div>
+              <h2>You’re all settled up. Awesome!</h2>
+              <p>
+                To add a new expense, click the orange “Add an expense” button.
+              </p>
+            </div>
           </div>
-        </div>
+          <BalanceSummary />
+        </>
       );
     }
   };
@@ -94,7 +100,12 @@ export default function Dashboard() {
         <div className={styles.dashboardHeader}>
           <h1>{activeTab}</h1>
           <div>
-            <button className={styles.orangeBtn}>Add an expense</button>
+            <button
+              className={styles.orangeBtn}
+              onClick={() => setShowAddExpenseModal(true)}
+            >
+              Add an expense
+            </button>
             <button className={styles.greenBtn}>Settle up</button>
           </div>
         </div>
@@ -111,6 +122,14 @@ export default function Dashboard() {
         </p>
         <button className={styles.learnMoreBtn}>Learn more</button>
       </div>
+
+      {/* Modal */}
+      {showAddExpenseModal && (
+        <AddExpenseModal
+          onClose={() => setShowAddExpenseModal(false)}
+          userId={"yourLoggedInUserId"} // 🔁 Replace with actual user ID
+        />
+      )}
     </div>
   );
 }
