@@ -17,9 +17,13 @@ app.use("/api/auth", authRoutes);
 const payerRoutes = require("./routes/payerRoutes");
 app.use("/api/payers", payerRoutes);
 
-//Expense Routes
+// Expense Routes
 const expenseRoutes = require("./routes/expenseRoutes");
 app.use("/api/expenses", expenseRoutes);
+
+// Friend Routes
+const friendRoutes = require("./routes/friendRoutes");
+app.use("/api/friends", friendRoutes);
 
 // MongoDB connection
 mongoose

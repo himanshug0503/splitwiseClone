@@ -4,13 +4,28 @@ import axios from "axios";
 import ChoosePayerModal from "./ChoosePayerModal";
 
 export default function AddExpenseModal({ onClose, userId }) {
-  const [friend, setFriend] = useState("");
+  const [friend, setFriend] = useState(null); // selected friend object
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [notes, setNotes] = useState("");
   const [image, setImage] = useState(null);
   const [showPayerModal, setShowPayerModal] = useState(false);
-  const [payer, setPayer] = useState("you"); // default
+  const [payer, setPayer] = useState("you");
+  const [friendSuggestions, setFriendSuggestions] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Fetch friends list
+  const fetchFriends = async (query = "") => {
+    try {
+      const res = await axios.get(`/api/users/search?q=${query}`);
+      // Normalize so frontend can always use f.id
+      const normalized = res.data.map((f) => ({ ...f, id: f._id }));
+      setFriendSuggestions(normalized || []);
+    } catch (err) {
+      console.error("Error fetching friends:", err);
+    }
+  };
 
   const handleSave = async () => {
     if (!description.trim() || !amount) return;
@@ -19,15 +34,17 @@ export default function AddExpenseModal({ onClose, userId }) {
       await axios.post(`/api/users/${userId}/expenses`, {
         description,
         amount: parseFloat(amount),
-        splitWith: friend ? [friend.trim()] : [],
-        paidBy: payer === "you" ? userId : "multiple", // adapt this
+        splitWith: friend ? [friend.id] : [],
+        paidBy: payer === "you" ? userId : "multiple",
         splitType: "equal",
         notes,
         image,
       });
+
       onClose();
     } catch (err) {
       console.error("Error saving expense:", err);
+      alert("Failed to save expense. Please try again.");
     }
   };
 
@@ -53,9 +70,40 @@ export default function AddExpenseModal({ onClose, userId }) {
           <input
             type="text"
             placeholder="Enter names or email addresses"
-            value={friend}
-            onChange={(e) => setFriend(e.target.value)}
+            value={inputValue}
+            onChange={(e) => {
+              const value = e.target.value;
+              setInputValue(value);
+              setShowSuggestions(true);
+              fetchFriends(value);
+            }}
+            onFocus={() => {
+              fetchFriends();
+              setShowSuggestions(true);
+            }}
           />
+
+          {/* Suggestions dropdown */}
+          {showSuggestions && friendSuggestions.length > 0 && (
+            <ul className={styles.suggestionsList}>
+              {friendSuggestions
+                .filter((f) =>
+                  f.name.toLowerCase().includes(inputValue.toLowerCase())
+                )
+                .map((f) => (
+                  <li
+                    key={f.id}
+                    onClick={() => {
+                      setFriend(f);
+                      setInputValue(f.name);
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    {f.name}
+                  </li>
+                ))}
+            </ul>
+          )}
 
           <div className={styles.expenseRow}>
             <img
@@ -106,7 +154,7 @@ export default function AddExpenseModal({ onClose, userId }) {
                   setPayer("multiple");
                   console.log("Multiple payer amounts:", data);
                 } else {
-                  setPayer("you"); // reset back to "you"
+                  setPayer("you");
                 }
               }}
             />
@@ -148,21 +196,6 @@ export default function AddExpenseModal({ onClose, userId }) {
           </button>
         </div>
       </div>
-
-      {/* Sub modal */}
-      {showPayerModal && (
-        <ChoosePayerModal
-          onClose={() => setShowPayerModal(false)}
-          onSelect={(selected, data) => {
-            if (selected === "multiple") {
-              setPayer("multiple");
-              console.log("Multiple payer amounts:", data);
-            } else {
-              setPayer("you");
-            }
-          }}
-        />
-      )}
     </div>
   );
 }
