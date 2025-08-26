@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "./AddExpenseModal.module.css";
 import axios from "axios";
+import ChoosePayerModal from "./ChoosePayerModal";
 
 export default function AddExpenseModal({ onClose, userId }) {
   const [friend, setFriend] = useState("");
@@ -8,6 +9,8 @@ export default function AddExpenseModal({ onClose, userId }) {
   const [amount, setAmount] = useState("");
   const [notes, setNotes] = useState("");
   const [image, setImage] = useState(null);
+  const [showPayerModal, setShowPayerModal] = useState(false);
+  const [payer, setPayer] = useState("you"); // default
 
   const handleSave = async () => {
     if (!description.trim() || !amount) return;
@@ -17,7 +20,7 @@ export default function AddExpenseModal({ onClose, userId }) {
         description,
         amount: parseFloat(amount),
         splitWith: friend ? [friend.trim()] : [],
-        paidBy: userId,
+        paidBy: payer === "you" ? userId : "multiple", // adapt this
         splitType: "equal",
         notes,
         image,
@@ -28,7 +31,6 @@ export default function AddExpenseModal({ onClose, userId }) {
     }
   };
 
-  // per person calculation
   const numPeople = friend ? 2 : 1;
   const perPerson = amount
     ? (parseFloat(amount) / numPeople).toFixed(2)
@@ -56,9 +58,8 @@ export default function AddExpenseModal({ onClose, userId }) {
           />
 
           <div className={styles.expenseRow}>
-            {/* 📷 Image next to description input */}
             <img
-              src="/images/general@2x.png" // put image inside public/images/
+              src="../general@2x.png"
               alt="Expense"
               className={styles.expenseIcon}
             />
@@ -79,11 +80,38 @@ export default function AddExpenseModal({ onClose, userId }) {
           />
 
           <p>
-            Paid by <strong>you</strong> and split <strong>equally</strong>{" "}
+            Paid by{" "}
+            <span
+              className={styles.clickable}
+              onClick={() => setShowPayerModal(true)}
+            >
+              <strong>
+                {payer === "you"
+                  ? "you"
+                  : payer === "multiple"
+                  ? "multiple people"
+                  : payer}
+              </strong>
+            </span>{" "}
+            and split <strong>equally</strong>{" "}
             <span className={styles.perPerson}>(₹{perPerson}/person)</span>
           </p>
 
-          {/* Options row */}
+          {/* Sub modal */}
+          {showPayerModal && (
+            <ChoosePayerModal
+              onClose={() => setShowPayerModal(false)}
+              onSelect={(selected, data) => {
+                if (selected === "multiple") {
+                  setPayer("multiple");
+                  console.log("Multiple payer amounts:", data);
+                } else {
+                  setPayer("you"); // reset back to "you"
+                }
+              }}
+            />
+          )}
+
           <div className={styles.optionsRow}>
             <span>
               {new Date().toLocaleDateString("en-IN", {
@@ -120,6 +148,21 @@ export default function AddExpenseModal({ onClose, userId }) {
           </button>
         </div>
       </div>
+
+      {/* Sub modal */}
+      {showPayerModal && (
+        <ChoosePayerModal
+          onClose={() => setShowPayerModal(false)}
+          onSelect={(selected, data) => {
+            if (selected === "multiple") {
+              setPayer("multiple");
+              console.log("Multiple payer amounts:", data);
+            } else {
+              setPayer("you");
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
