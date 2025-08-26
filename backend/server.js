@@ -13,6 +13,14 @@ app.use(cors());
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
+// Payer routes
+const payerRoutes = require("./routes/payerRoutes");
+app.use("/api/payers", payerRoutes);
+
+//Expense Routes
+const expenseRoutes = require("./routes/expenseRoutes");
+app.use("/api/expenses", expenseRoutes);
+
 // MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI)

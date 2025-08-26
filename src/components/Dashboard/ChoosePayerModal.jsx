@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./ChoosePayerModal.module.css";
+import axios from "axios";
 
 export default function ChoosePayerModal({ onClose, onSelect }) {
   const [mode, setMode] = useState("choose"); // "choose" | "multiple"
@@ -64,9 +65,28 @@ export default function ChoosePayerModal({ onClose, onSelect }) {
 
           <div className={styles.footerBtns}>
             <button
-              onClick={() => {
-                onSelect("multiple", payerAmounts); // pass "multiple"
-                onClose();
+              onClick={async () => {
+                try {
+                  await axios.post(
+                    "http://localhost:5000/api/payers",
+                    {
+                      description: "Dinner Expense", // replace with dynamic
+                      mode,
+                      payerAmounts: mode === "multiple" ? payerAmounts : {},
+                    },
+                    {
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                          "token"
+                        )}`,
+                      },
+                    }
+                  );
+                  onSelect(mode, payerAmounts);
+                  onClose();
+                } catch (err) {
+                  console.error("Error saving payer:", err);
+                }
               }}
               className={styles.saveBtn}
             >
