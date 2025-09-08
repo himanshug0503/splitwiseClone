@@ -1,11 +1,99 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Dashboard.module.css";
 import BalanceSummary from "./BalanceSummary";
-import AddExpenseModal from "./AddExpenseModal"; // ✅ Import the modal
+import AddExpenseModal from "./AddExpenseModal";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
+  const [friends, setFriends] = useState([]);
+  const [groups, setGroups] = useState([]);
+
+  // ✅ Fetch groups and friends when component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resFriends = await fetch("http://localhost:5000/api/friends", {
+          credentials: "include",
+        });
+        const resGroups = await fetch("http://localhost:5000/api/groups", {
+          credentials: "include",
+        });
+
+        const friendsData = await resFriends.json();
+        const groupsData = await resGroups.json();
+
+        setFriends(friendsData);
+        setGroups(groupsData);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // ✅ Add friend logic
+  const handleAddFriend = async () => {
+    const email = prompt("Enter friend's email:");
+    if (!email) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/friends/search?q=${email}`,
+        { credentials: "include" }
+      );
+      const data = await res.json();
+
+      if (data.exists) {
+        // Friend exists → add them
+        await fetch("http://localhost:5000/api/friends/add", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ friendId: data.user._id }),
+        });
+        setFriends([...friends, data.user]);
+        alert("Friend added successfully!");
+      } else {
+        // Friend does not exist → send invite email
+        await fetch("http://localhost:5000/api/invite", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email }),
+        });
+        alert("Invite sent to email!");
+      }
+    } catch (err) {
+      console.error("Error adding friend:", err);
+    }
+  };
+
+  // ✅ Add group logic
+  const handleAddGroup = async () => {
+    const groupName = prompt("Enter group name:");
+    if (!groupName) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/groups/search?q=${groupName}`,
+        { credentials: "include" }
+      );
+      const data = await res.json();
+
+      if (data.exists) {
+        // Group exists → add to sidebar
+        setGroups([...groups, data.group]);
+        alert("Group added successfully!");
+      } else {
+        // Group doesn’t exist → redirect to creation page
+        window.location.href = "/create-group";
+      }
+    } catch (err) {
+      console.error("Error adding group:", err);
+    }
+  };
 
   const renderMainContent = () => {
     if (activeTab === "Recent activity") {
@@ -74,12 +162,26 @@ export default function Dashboard() {
           All expenses
         </div>
 
+        {/* Groups */}
         <div className={styles.section}>
-          <strong>Groups</strong> <button>+ add</button>
+          <strong>Groups</strong>{" "}
+          <button onClick={handleAddGroup}>+ add</button>
+          <ul>
+            {groups.map((g) => (
+              <li key={g._id}>{g.name}</li>
+            ))}
+          </ul>
         </div>
 
+        {/* Friends */}
         <div className={styles.section}>
-          <strong>Friends</strong> <button>+ add</button>
+          <strong>Friends</strong>{" "}
+          <button onClick={handleAddFriend}>+ add</button>
+          <ul>
+            {friends.map((f) => (
+              <li key={f._id}>{f.name || f.email}</li>
+            ))}
+          </ul>
         </div>
 
         <div className={styles.inviteBox}>
