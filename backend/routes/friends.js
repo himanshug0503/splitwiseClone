@@ -3,21 +3,24 @@ const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const User = require("../models/User");
 
-// ✅ Search friends by name/email
+// ✅ Search by exact email
 router.get("/search", authMiddleware, async (req, res) => {
   try {
     const query = req.query.q;
-    if (!query) return res.json([]);
+    if (!query) return res.json({ exists: false });
 
-    const users = await User.find({
-      $or: [
-        { name: { $regex: query, $options: "i" } },
-        { email: { $regex: query, $options: "i" } },
-      ],
-      _id: { $ne: req.userId }, // exclude self
-    }).select("name email");
+    // Match exact email first (for invite flow)
+    const user = await User.findOne({ email: query }).select("name email");
+    if (!user) {
+      return res.json({ exists: false });
+    }
 
-    res.json(users);
+    // Prevent adding yourself
+    if (user._id.toString() === req.userId) {
+      return res.json({ exists: false });
+    }
+
+    res.json({ exists: true, user });
   } catch (err) {
     res.status(500).json({ msg: "Server error", error: err.message });
   }
