@@ -22,8 +22,20 @@ const expenseRoutes = require("./routes/expenseRoutes");
 app.use("/api/expenses", expenseRoutes);
 
 // Friend Routes
-const friendRoutes = require("./routes/friendRoutes");
-app.use("/api/friends", friendRoutes);
+// const friendRoutes = require("./routes/friendRoutes");
+// app.use("/api/friends", friendRoutes);
+
+// //New stuff
+// app.use("/api/friends", require("./routes/friends"));
+// app.use("/api/groups", require("./routes/groups"));
+// app.use("/api/transactions", require("./routes/transactions"));
+
+// Routes
+const friendsRoutes = require("./routes/friends");
+const groupsRoutes = require("./routes/groups");
+
+app.use("/api/friends", friendsRoutes);
+app.use("/api/groups", groupsRoutes);
 
 // MongoDB connection
 mongoose

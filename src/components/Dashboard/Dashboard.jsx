@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Dashboard.module.css";
 import BalanceSummary from "./BalanceSummary";
 import AddExpenseModal from "./AddExpenseModal";
@@ -8,29 +9,67 @@ export default function Dashboard() {
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
   const [friends, setFriends] = useState([]);
   const [groups, setGroups] = useState([]);
+  const navigate = useNavigate();
+
+  // Helper: get token or redirect to login
+  const getTokenOrRedirect = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return null;
+    }
+    return token;
+  };
 
   // ✅ Fetch groups and friends when component mounts
   useEffect(() => {
     const fetchData = async () => {
+      const token = getTokenOrRedirect();
+      if (!token) return;
+
       try {
         const resFriends = await fetch("http://localhost:5000/api/friends", {
-          credentials: "include",
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
+
         const resGroups = await fetch("http://localhost:5000/api/groups", {
-          credentials: "include",
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
+
+        // Handle unauthorized
+        if (resFriends.status === 401 || resGroups.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
+          return;
+        }
+
+        if (!resFriends.ok) {
+          throw new Error(`Friends fetch failed: ${resFriends.status}`);
+        }
+        if (!resGroups.ok) {
+          throw new Error(`Groups fetch failed: ${resGroups.status}`);
+        }
 
         const friendsData = await resFriends.json();
         const groupsData = await resGroups.json();
 
-        setFriends(friendsData);
-        setGroups(groupsData);
+        setFriends(Array.isArray(friendsData) ? friendsData : []);
+        setGroups(Array.isArray(groupsData) ? groupsData : []);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ✅ Add friend logic
@@ -38,35 +77,73 @@ export default function Dashboard() {
     const email = prompt("Enter friend's email:");
     if (!email) return;
 
+    const token = getTokenOrRedirect();
+    if (!token) return;
+
     try {
       const res = await fetch(
-        `http://localhost:5000/api/friends/search?q=${email}`,
-        { credentials: "include" }
+        `http://localhost:5000/api/friends/search?q=${encodeURIComponent(
+          email
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return;
+      }
+
       const data = await res.json();
 
-      if (data.exists) {
+      if (data.exists && data.user?._id) {
         // Friend exists → add them
-        await fetch("http://localhost:5000/api/friends/add", {
+        const addRes = await fetch("http://localhost:5000/api/friends/add", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({ friendId: data.user._id }),
         });
-        setFriends([...friends, data.user]);
+
+        if (!addRes.ok) {
+          const j = await addRes.json().catch(() => ({}));
+          throw new Error(j?.msg || "Failed to add friend");
+        }
+
+        setFriends((prev) => {
+          const exists = prev.some((f) => f._id === data.user._id);
+          return exists ? prev : [...prev, data.user];
+        });
         alert("Friend added successfully!");
       } else {
-        // Friend does not exist → send invite email
-        await fetch("http://localhost:5000/api/invite", {
+        // Friend does not exist → send invite email (if you have this endpoint)
+        const inviteRes = await fetch("http://localhost:5000/api/invite", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({ email }),
         });
+
+        if (!inviteRes.ok) {
+          const j = await inviteRes.json().catch(() => ({}));
+          throw new Error(j?.msg || "Failed to send invite");
+        }
+
         alert("Invite sent to email!");
       }
     } catch (err) {
       console.error("Error adding friend:", err);
+      alert(err.message || "Error adding friend");
     }
   };
 
@@ -75,23 +152,45 @@ export default function Dashboard() {
     const groupName = prompt("Enter group name:");
     if (!groupName) return;
 
+    const token = getTokenOrRedirect();
+    if (!token) return;
+
     try {
       const res = await fetch(
-        `http://localhost:5000/api/groups/search?q=${groupName}`,
-        { credentials: "include" }
+        `http://localhost:5000/api/groups/search?q=${encodeURIComponent(
+          groupName
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      if (res.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return;
+      }
+
       const data = await res.json();
 
-      if (data.exists) {
-        // Group exists → add to sidebar
-        setGroups([...groups, data.group]);
+      if (data.exists && data.group?._id) {
+        // Group exists → add to sidebar if not already listed
+        setGroups((prev) => {
+          const exists = prev.some((g) => g._id === data.group._id);
+          return exists ? prev : [...prev, data.group];
+        });
         alert("Group added successfully!");
       } else {
-        // Group doesn’t exist → redirect to creation page
-        window.location.href = "/create-group";
+        // Group doesn’t exist → redirect to creation page you already built
+        navigate("/create-group");
       }
     } catch (err) {
       console.error("Error adding group:", err);
+      alert(err.message || "Error adding group");
     }
   };
 
@@ -165,9 +264,9 @@ export default function Dashboard() {
         {/* Groups */}
         <div className={styles.section}>
           <strong>Groups</strong>{" "}
-          <button onClick={handleAddGroup}>+ add</button>
+          <button onClick={() => navigate("/groups")}>+ add</button>
           <ul>
-            {groups.map((g) => (
+            {groups.slice(-3).map((g) => (
               <li key={g._id}>{g.name}</li>
             ))}
           </ul>
