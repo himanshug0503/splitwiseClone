@@ -11,11 +11,29 @@ export default function CreateGroup() {
     { name: "", email: "" },
   ]);
   const [simplifyToggle, setSimplifyToggle] = useState(false);
-  const [groupType, setGroupType] = useState("Home"); // ✅ added state
+  const [groupType, setGroupType] = useState("Home");
   const [groups, setGroups] = useState([]);
   const [activeGroup, setActiveGroup] = useState(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [friends, setFriends] = useState([]);
 
-  // Fetch groups from backend
+  useEffect(() => {
+    const fetchFriends = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:5000/api/friends", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (res.ok) setFriends(data);
+      } catch (err) {
+        console.error("Error fetching friends:", err);
+      }
+    };
+    fetchFriends();
+  }, []);
+
   const fetchGroups = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -39,14 +57,14 @@ export default function CreateGroup() {
     fetchGroups();
   }, []);
 
-  // Create group
   const handleCreateGroup = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
 
-      // ✅ filter out empty members
-      const filteredMembers = members.filter((m) => m.email.trim() !== "");
+      const filteredMembers = members.filter(
+        (m) => m.email.trim() !== "" || m.name.trim() !== ""
+      );
 
       const res = await fetch("http://localhost:5000/api/groups/create", {
         method: "POST",
@@ -59,6 +77,7 @@ export default function CreateGroup() {
           members: filteredMembers,
           simplifyDebts: simplifyToggle,
           type: groupType,
+          notes,
         }),
       });
 
@@ -67,7 +86,7 @@ export default function CreateGroup() {
         const updatedGroups = [...groups, data].slice(-3).reverse();
         setGroups(updatedGroups);
         setActiveGroup(data);
-        // Reset form
+
         setGroupName("");
         setMembers([
           { name: "Himanshu", email: "himanshu0503@gmail.com", locked: true },
@@ -77,6 +96,8 @@ export default function CreateGroup() {
         ]);
         setSimplifyToggle(false);
         setGroupType("Home");
+        setNotes("");
+        setShowAdvanced(false);
       } else {
         alert(data.message || "Failed to create group");
       }
@@ -101,7 +122,6 @@ export default function CreateGroup() {
 
   return (
     <div className={styles.wrapper}>
-      {/* Sidebar */}
       <aside className={styles.sidePanel}>
         <h3 className={styles.panelHeading}>My Groups</h3>
         <ul className={styles.groupList}>
@@ -128,9 +148,7 @@ export default function CreateGroup() {
         </ul>
       </aside>
 
-      {/* Right Section */}
       <div className={styles.rightSection}>
-        {/* Active Group Details */}
         {activeGroup ? (
           <div className={styles.groupDetails}>
             <h2>{activeGroup.name}</h2>
@@ -147,7 +165,63 @@ export default function CreateGroup() {
           <p>Select a group to view details</p>
         )}
 
-        {/* Create Group Form */}
+        <div className={styles.logoUpload}>
+          <label className={styles.label}>Group Logo</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  setActiveGroup((prev) => ({
+                    ...prev,
+                    logoUrl: reader.result,
+                  }));
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+          />
+        </div>
+
+        <div className={styles.settleUpSection}>
+          <h5 className={styles.subHeading}>SETTLE UP DAY</h5>
+          <p className={styles.note}>
+            Currently, the settle up day can only be changed on the Splitwise
+            app.
+          </p>
+          <label className={styles.toggleSwitch}>
+            <input type="checkbox" disabled />
+            <span className={styles.slider}></span>
+          </label>
+        </div>
+
+        <div className={styles.advancedSection}>
+          <button
+            type="button"
+            className={styles.advancedToggle}
+            onClick={() => setShowAdvanced(!showAdvanced)}
+          >
+            Advanced settings
+          </button>
+
+          {showAdvanced && (
+            <div className={styles.advancedContent}>
+              <label>
+                Notes (optional):
+                <textarea
+                  className={styles.textarea}
+                  placeholder="Add notes about this group"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                />
+              </label>
+            </div>
+          )}
+        </div>
+
         <form onSubmit={handleCreateGroup} className={styles.formSection}>
           <h4 className={styles.heading}>START A NEW GROUP</h4>
           <label className={styles.label}>My group shall be called...</label>
@@ -175,6 +249,29 @@ export default function CreateGroup() {
                     className={styles.inputSmall}
                     disabled={member.locked}
                   />
+                  {member.name && !member.locked && (
+                    <ul className={styles.suggestions}>
+                      {friends
+                        .filter((f) =>
+                          f.name
+                            .toLowerCase()
+                            .includes(member.name.toLowerCase())
+                        )
+                        .slice(0, 5)
+                        .map((f) => (
+                          <li
+                            key={f._id}
+                            className={styles.suggestionItem}
+                            onClick={() => {
+                              handleMemberChange(index, "name", f.name);
+                              handleMemberChange(index, "email", f.email);
+                            }}
+                          >
+                            {f.name} ({f.email})
+                          </li>
+                        ))}
+                    </ul>
+                  )}
                   <input
                     type="email"
                     placeholder="Email (optional)"
@@ -196,6 +293,7 @@ export default function CreateGroup() {
                   )}
                 </div>
               ))}
+
               <button
                 type="button"
                 onClick={handleAddMember}
@@ -204,13 +302,12 @@ export default function CreateGroup() {
                 + Add a person
               </button>
 
-              {/* Group Options */}
               <div className={styles.groupOptions}>
                 <h5 className={styles.subHeading}>GROUP TYPE</h5>
                 <select
                   className={styles.dropdown}
                   value={groupType}
-                  onChange={(e) => setGroupType(e.target.value)} // ✅ controlled
+                  onChange={(e) => setGroupType(e.target.value)}
                 >
                   <option>Home</option>
                   <option>Trip</option>

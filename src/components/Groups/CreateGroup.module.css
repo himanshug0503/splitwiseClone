@@ -19,22 +19,40 @@ body {
   min-height: 100vh;
 }
 
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
 /* Sidebar */
 .sidePanel {
-  width: 220px;
+  width: 240px;
   background: #ffffff;
   border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   max-height: 90vh;
   overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.sidePanel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidePanel::-webkit-scrollbar-thumb {
+  background-color: #c0d4f7;
+  border-radius: 4px;
 }
 
 .panelHeading {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
   color: #003366;
+  text-align: center;
 }
 
 .groupList {
@@ -46,27 +64,34 @@ body {
 .groupItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px;
-  border-radius: 8px;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.25s, transform 0.2s;
 }
 
 .groupItem:hover {
-  background: #e6f2fa;
+  background: #e6f2ff;
+  transform: translateX(3px);
+}
+
+.groupItem.active {
+  background: #cce0ff;
+  font-weight: bold;
 }
 
 .groupIcon {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
+  border: 1px solid #0077cc;
+  transition: transform 0.2s;
 }
 
-.active {
-  background: #d0e3ff;
-  font-weight: bold;
+.groupItem:hover .groupIcon {
+  transform: scale(1.1);
 }
 
 .emptyText {
@@ -83,20 +108,37 @@ body {
   gap: 20px;
 }
 
-/* Active Group Details */
-.groupDetails {
-  background: #ffffff;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+@media (max-width: 768px) {
+  .sidePanel {
+    width: 100%;
+    max-height: 300px;
+  }
 }
 
-/* Create Group Form */
+/* Group Details Card */
+.groupDetails {
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+.groupDetails:hover {
+  transform: translateY(-2px);
+}
+
+/* Create Group Form Card */
 .formSection {
   background: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+.formSection:hover {
+  transform: translateY(-2px);
 }
 
 .heading {
@@ -117,6 +159,7 @@ body {
 .inputSmall,
 .dropdown {
   width: 100%;
+  max-width: 100%;
   padding: 8px 10px;
   margin-bottom: 12px;
   border-radius: 6px;
@@ -124,11 +167,8 @@ body {
   font-size: 14px;
   color: #1a2a33;
   background: #e6f2fa;
-}
-
-.inputSmall {
-  flex: 1;
-  margin-right: 8px;
+  box-sizing: border-box;
+  flex: none;
 }
 
 .input:focus,
@@ -145,6 +185,10 @@ body {
   margin-bottom: 10px;
 }
 
+.memberRow .inputSmall {
+  width: 120px;
+}
+
 .removeBtn {
   background: none;
   border: none;
@@ -155,22 +199,24 @@ body {
 }
 
 .removeBtn:hover {
-  transform: scale(1.25);
+  transform: scale(1.3);
 }
 
 .addBtn {
   background: #0077cc;
   color: white;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
   margin-top: 6px;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .addBtn:hover {
   background: #005fa3;
+  transform: translateY(-1px);
 }
 
 .subHeading {
@@ -251,168 +297,19 @@ body {
   background: #0077cc;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
   font-size: 15px;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .button:hover {
   background: #005fa3;
-}
-
-/* Fade-In Animation */
-.fadeInSection {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transform: translateY(-10px);
-  pointer-events: none;
-  transition: max-height 0.6s ease, opacity 0.6s ease, transform 0.6s ease;
-}
-
-.fadeInVisible {
-  max-height: 1000px;
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  transform: translateY(-1px);
 }
 
 /* Logo Box */
-.logoBox {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin-bottom: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #e6f2fa;
-}
-
-.previewImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .wrapper {
-    flex-direction: column;
-  }
-
-  .sidePanel,
-  .rightSection {
-    width: 100%;
-  }
-}
-
-/* Sidebar */
-.sidePanel {
-  width: 240px;
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  max-height: 90vh;
-  overflow-y: auto;
-  scroll-behavior: smooth;
-}
-
-.sidePanel::-webkit-scrollbar {
-  width: 8px;
-}
-
-.sidePanel::-webkit-scrollbar-thumb {
-  background-color: #c0d4f7;
-  border-radius: 4px;
-}
-
-.panelHeading {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: #003366;
-  text-align: center;
-}
-
-/* Group list */
-.groupList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.groupItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.25s, transform 0.2s;
-}
-
-.groupItem:hover {
-  background: #e6f2ff;
-  transform: translateX(3px);
-}
-
-.groupItem.active {
-  background: #cce0ff;
-  font-weight: bold;
-}
-
-.groupIcon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid #0077cc;
-  transition: transform 0.2s;
-}
-
-.groupItem:hover .groupIcon {
-  transform: scale(1.1);
-}
-
-/* Right Section */
-.rightSection {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Group Details Card */
-.groupDetails {
-  background: #ffffff;
-  padding: 18px;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s;
-}
-
-.groupDetails:hover {
-  transform: translateY(-2px);
-}
-
-/* Create Group Form Card */
-.formSection {
-  background: #ffffff;
-  padding: 22px;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s;
-}
-
-.formSection:hover {
-  transform: translateY(-2px);
-}
-
-/* Logo Box for new group */
 .logoBox {
   width: 90px;
   height: 90px;
@@ -437,63 +334,18 @@ body {
   object-fit: cover;
 }
 
-/* Buttons */
-.addBtn {
-  background: #0077cc;
-  color: white;
-  padding: 6px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-top: 6px;
-  transition: background 0.2s, transform 0.2s;
-}
-
-.addBtn:hover {
-  background: #005fa3;
-  transform: translateY(-1px);
-}
-
-.removeBtn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  color: red;
-  transition: transform 0.2s;
-}
-
-.removeBtn:hover {
-  transform: scale(1.3);
-}
-
-.button {
-  margin-top: 20px;
-  padding: 10px 18px;
-  background: #0077cc;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 15px;
-  transition: background 0.2s, transform 0.2s;
-}
-
-.button:hover {
-  background: #005fa3;
-  transform: translateY(-1px);
-}
-
-/* Scrollable fade-in for members */
+/* Fade-in Animation */
 .fadeInSection {
-  max-height: 0;
   opacity: 0;
-  overflow: hidden;
-  transform: translateY(-10px);
-  pointer-events: none;
-  transition: max-height 0.6s ease, opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(10px);
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .fadeInVisible {
@@ -503,30 +355,26 @@ body {
   pointer-events: auto;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .wrapper {
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .sidePanel {
-    width: 100%;
-    max-height: 300px;
-  }
+/* Suggestion List */
+.suggestions {
+  list-style: none;
+  background: #fff;
+  border: 1px solid #628db8;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: -10px;
+  padding: 0;
+  position: absolute;
+  width: 240px;
+  z-index: 10;
 }
 
-/* Fixed width for input fields */
-.input,
-.inputSmall {
-  width: 100%; /* full container width */
-  max-width: 100%; /* prevent auto-expand */
-  box-sizing: border-box;
-  flex: none; /* prevent flex growth */
+.suggestionItem {
+  padding: 8px;
+  cursor: pointer;
 }
 
-/* Small input fields in member row */
-.memberRow .inputSmall {
-  flex: none; /* prevent automatic expansion */
-  width: 120px; /* fixed default width */
+.suggestionItem:hover {
+  background: #e6f2ff;
 }
