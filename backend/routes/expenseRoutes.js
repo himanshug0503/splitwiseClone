@@ -7,7 +7,8 @@ const User = require("../models/User"); // assuming you already have this
 // ➡️ Add Expense
 router.post("/add", authMiddleware, async (req, res) => {
   try {
-    const { description, amount, friend } = req.body;
+    const { description, amount, splitWith, paidBy, splitType, notes, image } =
+      req.body;
 
     if (!description || !amount) {
       return res
@@ -16,10 +17,16 @@ router.post("/add", authMiddleware, async (req, res) => {
     }
 
     const expense = new Expense({
-      user: req.userId, // logged in user
+      createdBy: req.userId, // ✅ Matches schema
+
       description,
       amount,
-      friend,
+      splitWith,
+      payer: paidBy, // ✅ Matches schema field
+
+      splitType,
+      notes,
+      image,
     });
 
     await expense.save();
@@ -32,10 +39,14 @@ router.post("/add", authMiddleware, async (req, res) => {
 // ➡️ Get Friends List for suggestions
 router.get("/friends", authMiddleware, async (req, res) => {
   try {
-    // Example: fetching all other users except logged-in one
+    const query = req.query.q || "";
+
     const friends = await User.find(
-      { _id: { $ne: req.userId } }, // exclude self
-      "name email" // only return name & email
+      {
+        _id: { $ne: req.userId }, // exclude self
+        name: { $regex: query, $options: "i" }, // case-insensitive search by name
+      },
+      "name email"
     );
 
     res.json(friends);
