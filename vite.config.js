@@ -5,8 +5,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5174,
+    proxy: {
+      "/api": {
+        target: "http://localhost:5000", // your backend server
+        changeOrigin: true,
+      },
+    },
   },
-  // 👇 Tells Vite to always serve index.html for unknown routes
   resolve: {
     alias: {
       "@": "/src",
