@@ -28,17 +28,23 @@ export default function AddExpenseModal({ onClose, userId }) {
   };
 
   const handleSave = async () => {
-    if (!description.trim() || !amount) return;
+    if (!description.trim() || !amount || parseFloat(amount) <= 0) {
+      alert("Please enter a valid description and amount.");
+      return;
+    }
 
     try {
-      await axios.post(`/api/users/${userId}/expenses`, {
-        description,
-        amount: parseFloat(amount),
-        splitWith: friend ? [friend.id] : [],
-        paidBy: payer === "you" ? userId : "multiple",
-        splitType: "equal",
-        notes,
-        image,
+      const formData = new FormData();
+      formData.append("description", description);
+      formData.append("amount", parseFloat(amount));
+      formData.append("splitWith", friend ? friend.id : "");
+      formData.append("paidBy", payer === "you" ? userId : "multiple");
+      formData.append("splitType", "equal");
+      formData.append("notes", notes);
+      if (image) formData.append("image", image);
+
+      await axios.post(`/api/users/${userId}/expenses`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       onClose();
@@ -81,6 +87,7 @@ export default function AddExpenseModal({ onClose, userId }) {
               fetchFriends();
               setShowSuggestions(true);
             }}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           />
 
           {/* Suggestions dropdown */}
@@ -169,15 +176,27 @@ export default function AddExpenseModal({ onClose, userId }) {
               })}
             </span>
 
-            <button
-              className={styles.linkBtn}
-              onClick={() => {
-                const text = prompt("Add notes:");
-                if (text) setNotes(text);
-              }}
-            >
-              Add image/notes
-            </button>
+            {/* Notes textarea */}
+            {notes !== "" ? (
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Add notes..."
+                className={styles.notesBox}
+              />
+            ) : (
+              <button className={styles.linkBtn} onClick={() => setNotes("")}>
+                Add notes
+              </button>
+            )}
+
+            {/* Image upload */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+              className={styles.fileInput}
+            />
 
             <button
               className={styles.linkBtn}

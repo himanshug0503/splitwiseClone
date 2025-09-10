@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
 const Expense = require("../models/Expense");
-const User = require("../models/User"); // assuming you already have this
+const User = require("../models/User");
 
 // ➡️ Add Expense
-router.post("/add", authMiddleware, async (req, res) => {
+router.post("/:userId/expenses", authMiddleware, async (req, res) => {
   try {
-    const { description, amount, splitWith, paidBy, splitType, notes, image } =
+    const { description, amount, splitWith, paidBy, splitType, notes } =
       req.body;
 
     if (!description || !amount) {
@@ -17,40 +17,49 @@ router.post("/add", authMiddleware, async (req, res) => {
     }
 
     const expense = new Expense({
-      createdBy: req.userId, // ✅ Matches schema
-
+      createdBy: req.userId,
       description,
       amount,
       splitWith,
-      payer: paidBy, // ✅ Matches schema field
-
+      payer: paidBy, // ✅ map paidBy → payer
       splitType,
       notes,
-      image,
     });
 
     await expense.save();
-    res.json({ msg: "✅ Expense saved successfully", expense });
+
+    res.status(201).json({
+      msg: "✅ Expense saved successfully",
+      expense,
+    });
   } catch (err) {
+    console.error("Error saving expense:", err);
     res.status(500).json({ msg: "❌ Server error", error: err.message });
   }
 });
 
-// ➡️ Get Friends List for suggestions
-router.get("/friends", authMiddleware, async (req, res) => {
+// ➡️ Search Friends
+router.get("/search", authMiddleware, async (req, res) => {
   try {
     const query = req.query.q || "";
 
-    const friends = await User.find(
-      {
-        _id: { $ne: req.userId }, // exclude self
-        name: { $regex: query, $options: "i" }, // case-insensitive search by name
-      },
-      "name email"
-    );
+    const friends = await User.find({
+      _id: { $ne: req.user.id }, // exclude self
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { email: { $regex: query, $options: "i" } },
+      ],
+    }).select("name email _id");
 
-    res.json(friends);
+    const normalized = friends.map((f) => ({
+      id: f._id,
+      name: f.name,
+      email: f.email,
+    }));
+
+    res.json(normalized);
   } catch (err) {
+    console.error("Error fetching friends:", err);
     res.status(500).json({ msg: "❌ Server error", error: err.message });
   }
 });
