@@ -66,4 +66,25 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ Search within current user's friends by name or email
+router.get("/search-friends", authMiddleware, async (req, res) => {
+  try {
+    const query = (req.query.q || "").toLowerCase();
+    const user = await User.findById(req.userId).populate(
+      "friends",
+      "name email"
+    );
+    if (!user) return res.status(404).json({ msg: "User not found" });
+
+    const filtered = user.friends.filter(
+      (f) =>
+        f.name.toLowerCase().includes(query) ||
+        f.email.toLowerCase().includes(query)
+    );
+    res.json(filtered);
+  } catch (err) {
+    res.status(500).json({ msg: "Server error", error: err.message });
+  }
+});
+
 module.exports = router;

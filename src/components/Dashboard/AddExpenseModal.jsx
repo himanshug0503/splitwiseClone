@@ -24,7 +24,7 @@ export default function AddExpenseModal({
   const [inputValue, setInputValue] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Use prop token / userId if provided, otherwise try localStorage
+  // ✅ Use prop token / userId if provided, otherwise try localStorage
   const token =
     propToken ||
     (typeof window !== "undefined" && localStorage.getItem("token"));
@@ -32,7 +32,9 @@ export default function AddExpenseModal({
     propUserId ||
     (typeof window !== "undefined" && localStorage.getItem("userId"));
 
+  /** 🔍 Fetch friends from backend (must have valid JWT) */
   const fetchFriends = async (query = "") => {
+    console.log("fetchFriends called:", query, "token present:", !!token); // debug
     if (!token) {
       console.warn("fetchFriends skipped: missing token");
       setFriendSuggestions([]);
@@ -45,7 +47,10 @@ export default function AddExpenseModal({
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setFriendSuggestions(Array.isArray(res.data) ? res.data : []);
+      const results = Array.isArray(res.data)
+        ? res.data
+        : res.data.friends || [];
+      setFriendSuggestions(results);
     } catch (err) {
       console.error("fetchFriends error:", err.response?.data || err.message);
       setFriendSuggestions([]);
@@ -54,13 +59,33 @@ export default function AddExpenseModal({
 
   const handleAddFriend = (f) => {
     if (!f || !f._id) return;
-    if (!friends.find((fr) => fr._id === f._id)) setFriends([...friends, f]);
+    if (!friends.find((fr) => fr._id === f._id)) {
+      setFriends([...friends, f]);
+    }
     setInputValue("");
     setShowSuggestions(false);
   };
 
   const handleRemoveFriend = (id) =>
     setFriends(friends.filter((f) => f._id !== id));
+
+  /** ✅ Ensure friend exists in backend before saving expense */
+  const saveFriend = async (friend) => {
+    if (!token) return friend;
+    try {
+      const res = await axios.post(
+        "/api/friends/add",
+        { friendId: friend._id },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return res.data;
+    } catch (err) {
+      console.error("saveFriend error:", err.response?.data || err.message);
+      return friend;
+    }
+  };
 
   const handleSave = async () => {
     if (!description.trim()) {
@@ -75,34 +100,37 @@ export default function AddExpenseModal({
       alert("Missing authentication token. Please login again.");
       return;
     }
-    if (!userId) {
-      console.warn("userId missing in AddExpenseModal props and localStorage");
+
+    // save friends first
+    const savedFriends = [];
+    for (const f of friends) {
+      const saved = await saveFriend(f);
+      savedFriends.push(saved);
     }
 
     const payload = {
       description: description.trim(),
       amount: parseFloat(amount),
-      splitWith: friends.map((f) => f._id),
+      splitWith: savedFriends.map((f) => f._id),
       payer: payer === "you" ? userId || "unknown" : "multiple",
       splitType: "equal",
       notes,
     };
 
-    console.log("AddExpenseModal: sending payload:", payload);
-
     try {
       const res = await axios.post("/api/expenses/add", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("AddExpenseModal: server response:", res.data);
+      console.log("Expense saved:", res.data);
       onClose();
     } catch (err) {
       const serverData = err.response?.data;
       console.error("AddExpenseModal: save error:", serverData || err.message);
-      // Show an informative alert using server message if present
-      const userMsg =
-        serverData?.msg || serverData?.error || err.message || "Unknown error";
-      alert(`Failed to save expense. ${userMsg}`);
+      alert(
+        `Failed to save expense. ${
+          serverData?.msg || serverData?.error || err.message || "Unknown error"
+        }`
+      );
     }
   };
 
@@ -123,27 +151,31 @@ export default function AddExpenseModal({
 
         <div className={styles.modalBody}>
           <label>With you and:</label>
-          <input
-            type="text"
-            placeholder="Enter friend name"
-            value={inputValue}
-            onChange={(e) => {
-              const v = e.target.value;
-              setInputValue(v);
-              setShowSuggestions(true);
-              fetchFriends(v);
-            }}
-          />
+          <div className={styles.friendInputWrapper}>
+            <input
+              type="text"
+              placeholder="Enter friend name or email"
+              value={inputValue}
+              onChange={(e) => {
+                const v = e.target.value;
+                setInputValue(v);
+                setShowSuggestions(true);
+                fetchFriends(v);
+              }}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+              onFocus={() => inputValue && setShowSuggestions(true)}
+            />
 
-          {showSuggestions && friendSuggestions.length > 0 && (
-            <ul className={styles.suggestionsList}>
-              {friendSuggestions.map((f) => (
-                <li key={f._id} onClick={() => handleAddFriend(f)}>
-                  {f.name}
-                </li>
-              ))}
-            </ul>
-          )}
+            {showSuggestions && friendSuggestions.length > 0 && (
+              <ul className={styles.suggestionsList}>
+                {friendSuggestions.map((f) => (
+                  <li key={f._id} onMouseDown={() => handleAddFriend(f)}>
+                    {f.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <div className={styles.selectedFriends}>
             {friends.map((f) => (

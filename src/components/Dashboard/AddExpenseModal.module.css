@@ -73,38 +73,42 @@
   margin: 10px 0;
 }
 
-.expenseIcon {
-  width: 32px;
-  height: 32px;
-}
-
 .amountInput {
   margin-top: 10px;
   padding: 8px;
   font-size: 16px;
 }
 
-.suggestionsList {
-  max-height: 150px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  background: white;
-  position: absolute;
+/* ✅ Unified suggestions style */
+.friendInputWrapper {
+  position: relative;
   width: 100%;
-  z-index: 10;
+}
+
+.suggestionsList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  z-index: 1000; /* must be above modal contents */
+  max-height: 200px;
+  overflow-y: auto;
   list-style: none;
   padding: 0;
-  margin: 4px 0 0 0;
+  margin: 4px 0 0;
   box-sizing: border-box;
 }
 
 .suggestionsList li {
-  padding: 8px;
+  padding: 8px 12px;
   cursor: pointer;
 }
 
 .suggestionsList li:hover {
-  background: #f0f0f0;
+  background: #f1f1f1;
 }
 
 .notesBox {
@@ -115,10 +119,6 @@
   border: 1px solid #ccc;
   border-radius: 6px;
   resize: vertical;
-}
-
-.fileInput {
-  margin-top: 6px;
 }
 
 /* Selected friends tags/chips */
